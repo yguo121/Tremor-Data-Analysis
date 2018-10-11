@@ -5,7 +5,7 @@ from hertz_dataframe_tools import get_hertz, get_fft_as_set_of_arrays_over_n_sam
 import numpy as np
 
 
-base_dir = "/Users/Tim/Desktop/Columbia/STAT/STAT 5291/Project/DATA/"
+base_dir = "./DATA/"
 hand_dirs = ["FIRSTHAND",] #"SECONDHAND"]
 hand_full_dirs = map(lambda x: base_dir+x, hand_dirs)
 
