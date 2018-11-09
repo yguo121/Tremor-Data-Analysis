@@ -1,19 +1,20 @@
 source("hertz_dataframe_tools.R")
 library(ggplot2)
 library(tidyverse)
+library(MASS)
 
-# Put you own directory here
-base_dir <- "~/DATA/"
+# Put you own directory here, make sure DATA is at the same director as R code
+base_dir <- paste0(getwd(),"/DATA/")
 # Type of hand
 hand_dirs <- "FIRSTHAND" 
-hand_full_dirs <- paste(base_dir, hand_dirs, sep = "")
+hand_full_dirs <- paste0(base_dir, hand_dirs)
 setwd(hand_full_dirs)
 # Set the number of file
 
 csv <- list.files()[1]
-
-
 dataframe_patient <- read.csv(csv)
+setwd('..')
+
 dataframe_patient$timestamp <- seq(0,3600,length.out = length(dataframe_patient$timestamp))
 fft_data <- fft(dataframe_patient$rotationRate_x)[1:as.integer(nrow(dataframe_patient)/2)]
 fft_data <- mapply(abs,fft_data)
