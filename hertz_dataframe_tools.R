@@ -34,28 +34,28 @@ get_max_inside_bounds <- function(fft, rate, low, high){
 }
 
 get_fft_as_set_of_arrays_over_n_samples <- function(dataframe, frequency, FFT_N){
-  if (nrow(dataframe) < FFT_N){
+  if (length(dataframe) < FFT_N){
     return(c())
   }
   else{
     all_bins_summarized <- list()
-    for (start_index in seq(1, nrow(dataframe), FFT_N)){
-      if(start_index+FFT_N-1<=nrow(dataframe)){
+    for (start_index in seq(1, length(dataframe), FFT_N)){
+      if(start_index+FFT_N-1<=length(dataframe)){
         end <- start_index+FFT_N-1
       }
       else{
-        end <- nrow(dataframe)
+        end <- length(dataframe)
       }
-      fft_data <- dataframe$rotationRate_x[start_index:end]
+      fft_data <- dataframe[start_index:end]
       fft_output <- fft(fft_data)
       frequency_bins <- list(mapply(abs, fft_output))
       all_bins_summarized[[start_index]] <- frequency_bins[[1]][1:as.integer(length(frequency_bins[[1]])/2)]
     }
     non_null_names <- which(!sapply(all_bins_summarized, is.null))
     all_bins_summarized <- all_bins_summarized[non_null_names]
-    total_time <- nrow(dataframe)/frequency
+    total_time <- length(dataframe)/frequency
     time_per_interval <- FFT_N/frequency
-    times <- seq(0, total_time, length.out = as.integer(nrow(dataframe)/FFT_N)+1)
+    times <- seq(0, total_time, length.out = as.integer(length(dataframe)/FFT_N)+1)
     names(all_bins_summarized) <- times
     return(all_bins_summarized)
   }
@@ -70,4 +70,43 @@ get_max_amplitude <- function(dataframe,lower){
 }
 get_max_frequency <- function(dataframe,amplitude){
   return(which(dataframe %in% amplitude)/length(dataframe)*15)
+}
+
+get_fft_freq_amp <- function(dataframe, n_time,sample_rate){
+  time_name <- paste0("data_set_by_", n_time,"s")
+  data_list <- map(n_time*32, 
+                   get_fft_as_set_of_arrays_over_n_samples,
+                   dataframe = dataframe,
+                   frequency = sample_rate)
+  names(data_list) <- time_name
+  
+  amplitude <- list()
+  
+  for(i in 1:length(data_list)){
+    amplitude[[i]] <- lapply(data_list[[i]], get_max_amplitude, lower = 2)
+  }
+  
+  names(amplitude) <- time_name
+  
+  frequency <- list()
+  
+  for(i in 1:length(data_list)){
+    frequency[[i]] <- lapply(data_list[[i]],
+                             get_max_frequency, 
+                             amplitude = unlist(amplitude[[i]]))
+  }
+  
+  names(frequency) <- time_name
+  
+  for(i in 1:length(data_list)){
+    frequency[[i]] <- unlist(frequency[[i]])
+    amplitude[[i]] <- unlist(amplitude[[i]])
+  }
+  
+  freq_amp <- data.frame(unlist(frequency),unlist(amplitude))
+  row <- gsub("\\..*$", "", rownames(freq_amp))
+  fft <- data.frame(row,freq_amp)
+  colnames(fft) <- c("n_time","frequency","amplitude")
+  rownames(fft) <- c()
+  return(fft)
 }

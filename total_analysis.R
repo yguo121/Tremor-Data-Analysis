@@ -2,6 +2,7 @@ source_dir <- "/Users/Tim/Desktop/Columbia/STAT/STAT 5291/Project/"
 setwd(source_dir)
 source("hertz_dataframe_tools.R")
 library(ggplot2)
+library(tidyverse)
 
 # Put you own directory here
 base_dir <- "/Users/Tim/Desktop/Columbia/STAT/STAT 5291/Project/DATA/"
@@ -25,37 +26,17 @@ sample_rate <- get_hertz(dataframe_patient)
 
 # Transform the data by obtaining the frequency and amplitude and 10s/20s/.../120s interval
 
-library(tidyverse)
+dataframe_patient_new <- dataframe_patient[7:15]
 n_time <- seq(10,120,by = 10)
-time_name <- paste0("data_set_by_", n_time,"s")
-data_list <- map(n_time*32, 
-                 get_fft_as_set_of_arrays_over_n_samples,
-                 dataframe = dataframe_patient,
-                 frequency = sample_rate)
-names(data_list) <- time_name
-
-amplitude <- list()
-
-for(i in 1:length(data_list)){
-  amplitude[[i]] <- lapply(data_list[[i]], get_max_amplitude, lower = 2)
+fft <- get_fft_freq_amp(dataframe_patient_new[,1],n_time,sample_rate)
+total_fft<-fft[1]
+for(i in 1:ncol(dataframe_patient_new)){
+  fft <- get_fft_freq_amp(dataframe_patient_new[,i],n_time,sample_rate)
+  colnames(fft) <- paste0(colnames(dataframe_patient_new)[i],'.',colnames(fft))
+  total_fft <- cbind(total_fft,fft[-1])
 }
 
-names(amplitude) <- time_name
-
-frequency <- list()
-
-for(i in 1:length(data_list)){
-  frequency[[i]] <- lapply(data_list[[i]],
-                           get_max_frequency, 
-                           amplitude = unlist(amplitude[[i]]))
-}
-
-names(frequency) <- time_name
-
-for(i in 1:length(data_list)){
-  frequency[[i]] <- unlist(frequency[[i]])
-  amplitude[[i]] <- unlist(amplitude[[i]])
-}
+head(total_fft)
 
 # The amplitude and frequency are list of 12. 
 # In each list, the amplitude and the frequency are the values obtained 
@@ -68,7 +49,7 @@ for(i in 1:length(data_list)){
 # 
 # ffts_over_interval_1s <- get_fft_as_set_of_arrays_over_n_samples(dataframe_patient, sample_rate, 32)
 # 
-# ffts_over_interval_1m <- get_fft_as_set_of_arrays_over_n_samples(dataframe_patient, sample_rate, 1024)
+# ffts_over_interval_1m <- get_fft_as_set_of_arrays_over_n_samples(dataframe_patient$rotationRate_x, sample_rate, 1024)
 # ffts_over_interval_5m <- get_fft_as_set_of_arrays_over_n_samples(dataframe_patient, sample_rate, 8192)
 # ffts_over_interval_10m <- get_fft_as_set_of_arrays_over_n_samples(dataframe_patient, sample_rate, 8192*2)
 # ffts_over_interval_20m <- get_fft_as_set_of_arrays_over_n_samples(dataframe_patient, sample_rate, 8192*4)
