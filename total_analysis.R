@@ -1,11 +1,9 @@
-source_dir <- "/Users/Tim/Desktop/Columbia/STAT/STAT 5291/Project/"
-setwd(source_dir)
 source("hertz_dataframe_tools.R")
 library(ggplot2)
 library(tidyverse)
 
 # Put you own directory here
-base_dir <- "/Users/Tim/Desktop/Columbia/STAT/STAT 5291/Project/DATA/"
+base_dir <- "~/DATA/"
 # Type of hand
 hand_dirs <- "FIRSTHAND" 
 hand_full_dirs <- paste(base_dir, hand_dirs, sep = "")
