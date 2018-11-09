@@ -36,12 +36,16 @@ for(i in 1:ncol(dataframe_patient_new)){
   total_fft <- cbind(total_fft,fft[-1])
 }
 
+#classification:
 head(total_fft)
+prior <- rep(1/12,12)
+lda.time <- lda(n_time ~ ., prior=prior, data=total_fft)
+Confusion <- xtabs(~ total_fft$n_time + predict(lda.time)$class)
 
-# The amplitude and frequency are list of 12. 
-# In each list, the amplitude and the frequency are the values obtained 
-# by using the fast fourier transformation and cutting the data into that 
-# time interval
+#clustering:need to find a way to track back
+D <- dist(total_fft[-1], method="euclidean")
+hc.single <- hclust(D, method="single")
+plot(hc.single, hang=-1)
 
 # map 
 
