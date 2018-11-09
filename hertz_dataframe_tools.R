@@ -60,3 +60,14 @@ get_fft_as_set_of_arrays_over_n_samples <- function(dataframe, frequency, FFT_N)
     return(all_bins_summarized)
   }
 }
+
+get_max_amplitude <- function(dataframe,lower){
+  n <- length(dataframe)
+  percent <- lower/15
+  order <- as.integer(percent*n)
+  new_dataframe <- dataframe[order:n]
+  return(max(new_dataframe))
+}
+get_max_frequency <- function(dataframe,amplitude){
+  return(which(dataframe %in% amplitude)/length(dataframe)*15)
+}
