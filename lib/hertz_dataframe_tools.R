@@ -110,3 +110,15 @@ get_fft_freq_amp <- function(dataframe, n_time,sample_rate){
   rownames(fft) <- c()
   return(fft)
 }
+
+
+#### clean data ####
+# df must be the dataframe with fft transformation containing freq & amplitude
+get_amp_freq <- function(df){
+  amp = max(df$amplitude[which(df$frequency > 2)])
+  freq = df$frequency[which(df$amplitude == max(df$amplitude[which(df$frequency > 2)]))]
+  return(c(amp,freq))
+}
+
+
+
