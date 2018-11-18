@@ -1,0 +1,53 @@
+---
+title: "main"
+author: "Shilin Li (sl4261)"
+date: "11/17/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Part 1)
+
+EDA result
+
+Time Series Graph
+```{r}
+
+```
+
+Fast-Fourier Transformation
+```{r}
+
+```
+
+Logistic Model Assumption
+```{r}
+
+```
+
+
+Part 2)
+
+Logistic Regression
+```{r}
+
+```
+
+
+Part 3)
+
+Train RF model
+```{r}
+# Random Forest Training
+tm_train=NA
+tm_train <- system.time(fit_train_xgb <- train(dt[1:18,], dt$label, run_rf = T))
+
+#save(fit_train_gbm, file="../output/fit_train_rf.RData")
+```
+
+
+
