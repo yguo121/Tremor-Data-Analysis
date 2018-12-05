@@ -6,11 +6,11 @@ library(caret)
 library(MASS)
 library(randomForest)
 
-load("../data/train_set/train.RData")
+load("../data/train_set/train_5.RData")
 dt_train <- as.data.frame(dt_train)
 dt_train$label <- as.factor(dt_train$label)
 
-load("../data/test_set/test.RData")
+load("../data/test_set/test_5.RData")
 dt_test <- as.data.frame(dt_test)
 dt_test$label <- as.factor(dt_test$label)
 
@@ -22,7 +22,7 @@ for (i in 1:18) {
 
 
 ## Train
-forest_fit <- randomForest(label ~ ., data = dt_train, ntree=100, mtry = 5)
+forest_fit <- randomForest(label ~ ., data = dt_train, ntree=1000, mtry = 5)
 #forest_fit <- randomForest(label ~ ampGravity_z + freqRotation_x + ampGravity_y + ampAcceleration_z + ampGravity_x + ampRotation_x + ampAcceleration_x + ampAcceleration_y + ampRotation_z + freqAcceleration_y, data = dt_train, ntree = 100, mtry = 5)
 
 
