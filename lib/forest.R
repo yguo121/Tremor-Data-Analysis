@@ -6,11 +6,11 @@ library(caret)
 library(MASS)
 library(randomForest)
 
-load("../data/train_set/train.RData")
+load("../data/train_set/train_5.RData")
 dt_train <- as.data.frame(dt_train)
 dt_train$label <- as.factor(dt_train$label)
 
-load("../data/test_set/test.RData")
+load("../data/test_set/test_5.RData")
 dt_test <- as.data.frame(dt_test)
 dt_test$label <- as.factor(dt_test$label)
 
@@ -22,11 +22,16 @@ for (i in 1:18) {
 
 
 ## Train
-forest_fit <- randomForest(label ~ ., data = dt_train, ntree=100, mtry = 5)
+forest_fit <- randomForest(label ~ ., data = dt_train, ntree=1000, mtry = 5)
 #forest_fit <- randomForest(label ~ ampGravity_z + freqRotation_x + ampGravity_y + ampAcceleration_z + ampGravity_x + ampRotation_x + ampAcceleration_x + ampAcceleration_y + ampRotation_z + freqAcceleration_y, data = dt_train, ntree = 100, mtry = 5)
 
+par(mar=c(5.1, 4.1, 4.1, 8.1), xpd=TRUE)
+plot(forest_fit,log="y")
+legend("topright", inset=c(-0.25,0), legend=c("Average OOB", "First Hand", "Second Hand"), col=c(1,2,3), cex=0.8,fill=1:4)
 
-plot(forest_fit)
+
+plot(c(0,1),type="n", axes=F, xlab="", ylab="")
+legend("top", c(1,2,3))
 forest_fit
 
 ### Rank Variable Importance
